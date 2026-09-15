@@ -15,8 +15,10 @@ export default function AppLayout() {
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Header />
 
-      <main className="flex-1 px-4 py-5 pb-20">
-        <Outlet />
+      <main className="flex-1 px-4 py-5 pb-20 md:px-8 md:py-8 md:pb-8">
+        <div className="md:max-w-5xl md:mx-auto">
+          <Outlet />
+        </div>
       </main>
 
       <Footer activeTab={activeTab} />

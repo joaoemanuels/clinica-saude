@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import Calendario from "../../components/agendamento/Calendario";
 import GradeDeHorarios from "../../components/agendamento/GradeDeHorarios";
+import ConfirmacaoAgendamento from "../../components/agendamento/Confirmacaoagendamento";
+import ModalDadosPaciente from "../../components/agendamento/Modaldadospaciente";
 
 const DIAS_SEMANA_EXTENSO = [
   "domingo",
@@ -11,6 +13,7 @@ const DIAS_SEMANA_EXTENSO = [
   "sexta-feira",
   "sábado",
 ];
+
 const MESES_EXTENSO = [
   "Janeiro",
   "Fevereiro",
@@ -39,12 +42,15 @@ const HORARIOS_MOCK = [
   "17:00",
   "18:00",
 ];
+
 const OCUPADOS_MOCK = ["11:00", "18:00"];
 
 export default function NovoAgendamento() {
   const [mesAtual, setMesAtual] = useState(new Date(2026, 1, 1));
   const [diaSelecionado, setDiaSelecionado] = useState(10);
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [agendamentoConfirmado, setAgendamentoConfirmado] = useState(null);
 
   const dataLabel = useMemo(() => {
     if (!diaSelecionado) return "";
@@ -94,31 +100,76 @@ export default function NovoAgendamento() {
     setDiaSelecionado(null);
   }
 
-  return (
-    <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:items-start md:gap-6">
-      <h1 className="text-xl font-bold text-slate-800 md:col-span-2">
-        Agende sua consulta
-      </h1>
+  function handleConfirmarDados({ nome, telefone }) {
+    setAgendamentoConfirmado({
+      nome,
+      telefone,
+      dataLabel,
+      horario: horarioSelecionado,
+    });
+    setModalAberto(false);
+  }
 
-      <Calendario
-        mesAtual={mesAtual}
-        diaSelecionado={diaSelecionado}
-        onSelectDia={handleSelectDia}
-        onMesAnterior={handleMesAnterior}
-        onMesProximo={handleMesProximo}
+  function handleNovoAgendamento() {
+    setAgendamentoConfirmado(null);
+    setHorarioSelecionado(null);
+  }
+
+  if (agendamentoConfirmado) {
+    return (
+      <ConfirmacaoAgendamento
+        agendamento={agendamentoConfirmado}
+        onNovoAgendamento={handleNovoAgendamento}
+        onVerAgendamentos={() => {
+          /* navegação para /meus-agendamentos entra aqui via useNavigate */
+        }}
       />
+    );
+  }
 
-      {diaSelecionado ? (
-        <GradeDeHorarios
-          dataLabel={dataLabel}
-          slots={slots}
-          onSelectHorario={handleSelectHorario}
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-xl font-bold text-slate-800">Agende sua consulta</h1>
+
+      <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:items-start md:gap-6">
+        <Calendario
+          mesAtual={mesAtual}
+          diaSelecionado={diaSelecionado}
+          onSelectDia={handleSelectDia}
+          onMesAnterior={handleMesAnterior}
+          onMesProximo={handleMesProximo}
         />
-      ) : (
-        <div className="text-center text-sm text-slate-400 py-10">
-          Escolha uma data para ver os horários disponíveis.
-        </div>
+
+        {diaSelecionado ? (
+          <GradeDeHorarios
+            dataLabel={dataLabel}
+            slots={slots}
+            onSelectHorario={handleSelectHorario}
+          />
+        ) : (
+          <div className="text-center text-sm text-slate-400 py-10">
+            Escolha uma data para ver os horários disponíveis.
+          </div>
+        )}
+      </div>
+
+      {horarioSelecionado && (
+        <button
+          type="button"
+          onClick={() => setModalAberto(true)}
+          className="w-full md:w-auto md:self-end bg-emerald-600 text-white
+                     rounded-lg px-4 py-2 font-medium hover:bg-emerald-700
+                     transition-colors"
+        >
+          Confirmar agendamento
+        </button>
       )}
+
+      <ModalDadosPaciente
+        open={modalAberto}
+        onClose={() => setModalAberto(false)}
+        onConfirmar={handleConfirmarDados}
+      />
     </div>
   );
 }

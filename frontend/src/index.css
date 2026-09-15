@@ -1,36 +1,27 @@
 @import "tailwindcss";
 @import "./assets/reset.css";
 
+@theme {
+  --color-primary: hsl(160 84% 33%);
+  --color-primary-dark: hsl(160 84% 24%);
+  --color-primary-light: hsl(160 60% 92%);
+
+  --color-success: hsl(152 60% 40%);
+  --color-warning: hsl(38 92% 50%);
+  --color-danger: hsl(0 84% 60%);
+
+  --color-bg: hsl(210 40% 98%);
+  --color-surface: hsl(0 0% 100%);
+  --color-border: hsl(214 32% 91%);
+  --color-text: hsl(222 47% 11%);
+  --color-text-muted: hsl(215 16% 47%);
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
 @layer base {
-  :root {
-    /* Cor primária (verde da marca) */
-    --color-primary: 160 84% 33%;
-    --color-primary-dark: 160 84% 24%;
-    --color-primary-light: 160 60% 92%;
-
-    /* Status */
-    --color-success: 152 60% 40%;
-    --color-warning: 38 92% 50%;
-    --color-danger: 0 84% 60%;
-
-    /* Neutros */
-    --color-bg: 210 40% 98%;
-    --color-surface: 0 0% 100%;
-    --color-border: 214 32% 91%;
-    --color-text: 222 47% 11%;
-    --color-text-muted: 215 16% 47%;
-  }
-
-  html {
-    font-family:
-      "Inter",
-      system-ui,
-      -apple-system,
-      sans-serif;
-  }
-
   body {
-    background-color: hsl(var(--color-bg));
-    color: hsl(var(--color-text));
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 }
