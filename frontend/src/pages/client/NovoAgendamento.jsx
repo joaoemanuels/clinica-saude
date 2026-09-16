@@ -38,8 +38,8 @@ function formatarDataISO(ano, mes, dia) {
 }
 
 export default function NovoAgendamento() {
-  const [mesAtual, setMesAtual] = useState(new Date(2026, 1, 1));
-  const [diaSelecionado, setDiaSelecionado] = useState(10);
+  const [mesAtual, setMesAtual] = useState(new Date());
+  const [diaSelecionado, setDiaSelecionado] = useState(new Date().getDate());
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [agendamentoConfirmado, setAgendamentoConfirmado] = useState(null);

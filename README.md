@@ -12,15 +12,6 @@ Este projeto foi desenvolvido como teste técnico para a vaga de **Estagiário F
 - Permite ao paciente criar um agendamento de forma autônoma
 - Oferece uma visão de gestão para a clínica acompanhar os agendamentos recebidos
 
-O sistema tem **duas visões**:
-
-| Visão                | Público                         | Objetivo                                                                                           |
-| -------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Área do Paciente** | Quem quer marcar uma consulta   | Escolher data, ver horários livres, preencher dados e confirmar o agendamento                      |
-| **Área da Clínica**  | Equipe/administração da clínica | Login, dashboard com métricas, listagem e filtro de agendamentos, gestão de perfil e configurações |
-
----
-
 ## 🖥️ Telas e fluxo
 
 ### Área do Paciente (web)
@@ -30,14 +21,6 @@ O sistema tem **duas visões**:
 3. Ao escolher um horário livre, abre um modal **"Informe seus dados"** (nome completo + telefone)
 4. Confirmação exibe resumo completo (nome, data, horário, telefone) com status "Agendamento confirmado ✅"
 5. **Meus Agendamentos** — lista os agendamentos já feitos, com estado vazio amigável quando não há nenhum
-
-### Área da Clínica (painel administrativo — mobile-first)
-
-1. **Login** — acesso da equipe da clínica
-2. **Painel/Dashboard** — resumo do dia: total de agendamentos, confirmados, pendentes, cancelados, com variação percentual
-3. **Agendamentos** — lista completa com busca (nome, telefone ou data), filtro por status (Todos/Confirmados/Pendentes/Cancelados) e por período
-4. **Perfil** — dados do profissional, especialidade, horário de atendimento
-5. **Configurações** — notificações, integração com calendário externo, tema, horário de atendimento
 
 ### Componentes reutilizáveis
 
@@ -60,10 +43,10 @@ Usuário escolhe data
   Frontend (React)
         │  GET /available?date=YYYY-MM-DD
         ▼
-   Backend (REST API)
+  Backend (REST API)
         │  consulta cache/API de feriados
         ▼
- Nager.Date API (feriados BR)
+  Nager.Date API (feriados BR)
         │
         ▼
   Backend valida (fim de semana / feriado / horário ocupado)
@@ -246,16 +229,16 @@ O frontend roda por padrão em `http://localhost:5173` e consome a API em `http:
 
 ---
 
-## 🔮 Próximos passos
+## O que eu adicionaria
 
-- Autenticação real para a área da clínica (hoje prototipada apenas no design)
-- Painel de métricas (dashboard) conectado a dados reais
-- Notificações automáticas de confirmação (e-mail/WhatsApp)
-- Testes automatizados (unitários no backend, componentes no frontend)
+- **Login** — acesso da equipe da clínica
+- **Painel/Dashboard** — resumo do dia: total de agendamentos, confirmados, pendentes e cancelados, com variação percentual
+- **Agendamentos** — lista completa com busca (nome, telefone ou data), filtro por status (Todos/Confirmados/Pendentes/Cancelados) e por período
+- **Perfil** — dados do profissional, especialidade, horário de atendimento
+- **Configurações** — notificações, integração com calendário externo, tema, horário de atendimento
+- **Autenticação** para a área da clínica (hoje prototipada apenas no design)
+- **Painel de métricas** conectado a dados reais
+- **Notificações automáticas** de confirmação (e-mail/WhatsApp)
+- **Testes automatizados** (unitários no backend, componentes no frontend)
 
 ---
-
-## 👤 Autor
-
-João Emanuel — Desenvolvedor Full Stack
-[github.com/joaoemanuels](https://github.com/joaoemanuels) · [linkedin.com/in/joao-emanuels](https://linkedin.com/in/joao-emanuels)
