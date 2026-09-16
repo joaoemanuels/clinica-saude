@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import Calendario from "../../components/agendamento/Calendario";
 import GradeDeHorarios from "../../components/agendamento/GradeDeHorarios";
 import ModalDadosPaciente from "../../components/agendamento/ModalDadosPaciente";
-import ConfirmacaoAgendamento from "../../components/agendamento/ConfirmacaoAgendamento";
+import ConfirmacaoAgendamento from "../../components/agendamento/ConfirmacaoAgendamentos";
 import { useHorariosDisponiveis } from "../../hooks/useHorariosDisponiveis";
 import { useAgendamentos } from "../../hooks/useAgendamentos";
 
