@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "../ui/Modal";
 
-export default function ModalDadosPaciente({ open, onClose, onConfirmar }) {
+export default function ModalDadosPacientes({ open, onClose, onConfirmar }) {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
 

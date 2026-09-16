@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import Calendario from "../../components/agendamento/Calendario";
-import GradeDeHorarios from "../../components/agendamento/GradeDeHorarios";
-import ModalDadosPaciente from "../../components/agendamento/ModalDadosPaciente";
+import GradeHorarios from "../../components/agendamento/GradeHorarios";
+import ModalDadosPaciente from "../../components/agendamento/ModalDadosPacientes";
 import ConfirmacaoAgendamento from "../../components/agendamento/ConfirmacaoAgendamentos";
 import { useHorariosDisponiveis } from "../../hooks/useHorariosDisponiveis";
 import { useAgendamentos } from "../../hooks/useAgendamentos";
@@ -188,7 +188,7 @@ export default function NovoAgendamento() {
           !carregando &&
           disponibilidade &&
           !disponibilidade.blocked && (
-            <GradeDeHorarios
+            <GradeHorarios
               dataLabel={dataLabel}
               slots={slots}
               onSelectHorario={handleSelectHorario}

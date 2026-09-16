@@ -7,12 +7,7 @@ const LEGENDA = [
   { status: "selecionado", label: "Selecionado" },
 ];
 
-/**
-  @param {string} dataLabel 
-  @param {{ horario: string, status: "livre"|"ocupado"|"selecionado" }[]} slots
-  @param {(horario: string) => void} onSelectHorario
- */
-export default function GradeDeHorarios({ dataLabel, slots, onSelectHorario }) {
+export default function GradeHorarios({ dataLabel, slots, onSelectHorario }) {
   return (
     <Card>
       <h2 className="font-semibold text-slate-800 mb-1">
