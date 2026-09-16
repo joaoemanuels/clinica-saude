@@ -14,16 +14,17 @@ Este projeto foi desenvolvido como teste técnico para a vaga de **Estagiário F
 
 O sistema tem **duas visões**:
 
-| Visão | Público | Objetivo |
-|---|---|---|
-| **Área do Paciente** | Quem quer marcar uma consulta | Escolher data, ver horários livres, preencher dados e confirmar o agendamento |
-| **Área da Clínica** | Equipe/administração da clínica | Login, dashboard com métricas, listagem e filtro de agendamentos, gestão de perfil e configurações |
+| Visão                | Público                         | Objetivo                                                                                           |
+| -------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Área do Paciente** | Quem quer marcar uma consulta   | Escolher data, ver horários livres, preencher dados e confirmar o agendamento                      |
+| **Área da Clínica**  | Equipe/administração da clínica | Login, dashboard com métricas, listagem e filtro de agendamentos, gestão de perfil e configurações |
 
 ---
 
 ## 🖥️ Telas e fluxo
 
 ### Área do Paciente (web)
+
 1. **Novo Agendamento** — calendário para escolher a data + grade de horários (08:00–18:00, blocos de 1h)
 2. Horários já ocupados aparecem desabilitados; datas de fim de semana/feriado bloqueiam a seleção com aviso explícito ("Sem atendimento aos finais de semana" / "Sem atendimento neste dia — feriado")
 3. Ao escolher um horário livre, abre um modal **"Informe seus dados"** (nome completo + telefone)
@@ -31,6 +32,7 @@ O sistema tem **duas visões**:
 5. **Meus Agendamentos** — lista os agendamentos já feitos, com estado vazio amigável quando não há nenhum
 
 ### Área da Clínica (painel administrativo — mobile-first)
+
 1. **Login** — acesso da equipe da clínica
 2. **Painel/Dashboard** — resumo do dia: total de agendamentos, confirmados, pendentes, cancelados, com variação percentual
 3. **Agendamentos** — lista completa com busca (nome, telefone ou data), filtro por status (Todos/Confirmados/Pendentes/Cancelados) e por período
@@ -38,6 +40,7 @@ O sistema tem **duas visões**:
 5. **Configurações** — notificações, integração com calendário externo, tema, horário de atendimento
 
 ### Componentes reutilizáveis
+
 - Card de horário com 3 estados: Livre / Ocupado / Selecionado
 - Badge de status: Confirmado / Pendente / Cancelado
 - Toast de alerta (ex: "Este horário já foi reservado")
@@ -80,14 +83,17 @@ Usuário escolhe data
 ## 🛠️ Tecnologias
 
 **Frontend**
+
 - React + Vite + TypeScript
 - Tailwind CSS
 
 **Backend**
+
 - Node.js + Express (rotas REST)
 - Consumo da API pública de feriados: `https://date.nager.at/api/v3/PublicHolidays/2026/BR`
 
 **Persistência**
+
 - Banco de dados relacional (SQLite/PostgreSQL) com uma tabela `appointments`
 
 ---
@@ -106,6 +112,7 @@ Usuário escolhe data
 ## 🔌 Endpoints da API
 
 ### `GET /available?date=2026-02-10`
+
 Retorna os horários disponíveis para a data informada, já descontando feriados, fins de semana e horários ocupados.
 
 ```json
@@ -117,6 +124,7 @@ Retorna os horários disponíveis para a data informada, já descontando feriado
 ```
 
 Se a data cair em feriado ou fim de semana:
+
 ```json
 {
   "date": "2026-02-14",
@@ -127,6 +135,7 @@ Se a data cair em feriado ou fim de semana:
 ```
 
 ### `POST /appointments`
+
 Cria um novo agendamento.
 
 ```json
@@ -150,6 +159,7 @@ Cria um novo agendamento.
 ```
 
 ### `GET /appointments`
+
 Lista todos os agendamentos cadastrados.
 
 ```json
@@ -171,25 +181,27 @@ Lista todos os agendamentos cadastrados.
 
 **Tabela `appointments`**
 
-| Campo | Tipo | Descrição |
-|---|---|---|
-| `id` | UUID | Identificador único |
-| `date` | DATE | Data da consulta |
-| `time` | TIME | Horário (08:00–18:00) |
-| `name` | VARCHAR | Nome do paciente |
-| `phone` | VARCHAR | Telefone do paciente |
-| `status` | VARCHAR | confirmado / pendente / cancelado |
-| `created_at` | TIMESTAMP | Data de criação do registro |
+| Campo        | Tipo      | Descrição                         |
+| ------------ | --------- | --------------------------------- |
+| `id`         | UUID      | Identificador único               |
+| `date`       | DATE      | Data da consulta                  |
+| `time`       | TIME      | Horário (08:00–18:00)             |
+| `name`       | VARCHAR   | Nome do paciente                  |
+| `phone`      | VARCHAR   | Telefone do paciente              |
+| `status`     | VARCHAR   | confirmado / pendente / cancelado |
+| `created_at` | TIMESTAMP | Data de criação do registro       |
 
 ---
 
 ## 🚀 Como rodar localmente
 
 ### Pré-requisitos
+
 - Node.js 18+
 - npm ou yarn
 
 ### Backend
+
 ```bash
 cd backend
 npm install
@@ -198,6 +210,7 @@ npm run dev
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install

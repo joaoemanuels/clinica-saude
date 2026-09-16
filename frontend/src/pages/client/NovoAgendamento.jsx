@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import Calendario from "../../components/agendamento/Calendario";
 import GradeDeHorarios from "../../components/agendamento/GradeDeHorarios";
-import ConfirmacaoAgendamento from "../../components/agendamento/Confirmacaoagendamento";
-import ModalDadosPaciente from "../../components/agendamento/Modaldadospaciente";
+import ModalDadosPaciente from "../../components/agendamento/ModalDadosPaciente";
+import ConfirmacaoAgendamento from "../../components/agendamento/ConfirmacaoAgendamento";
+import { useHorariosDisponiveis } from "../../hooks/useHorariosDisponiveis";
+import { useAgendamentos } from "../../hooks/useAgendamentos";
 
 const DIAS_SEMANA_EXTENSO = [
   "domingo",
@@ -13,7 +15,6 @@ const DIAS_SEMANA_EXTENSO = [
   "sexta-feira",
   "sábado",
 ];
-
 const MESES_EXTENSO = [
   "Janeiro",
   "Fevereiro",
@@ -29,21 +30,11 @@ const MESES_EXTENSO = [
   "Dezembro",
 ];
 
-const HORARIOS_MOCK = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-];
-
-const OCUPADOS_MOCK = ["11:00", "18:00"];
+function formatarDataISO(ano, mes, dia) {
+  const mesStr = String(mes + 1).padStart(2, "0");
+  const diaStr = String(dia).padStart(2, "0");
+  return `${ano}-${mesStr}-${diaStr}`;
+}
 
 export default function NovoAgendamento() {
   const [mesAtual, setMesAtual] = useState(new Date(2026, 1, 1));
@@ -51,6 +42,18 @@ export default function NovoAgendamento() {
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [agendamentoConfirmado, setAgendamentoConfirmado] = useState(null);
+  const [erroConfirmacao, setErroConfirmacao] = useState(null);
+
+  const dataISO = diaSelecionado
+    ? formatarDataISO(
+        mesAtual.getFullYear(),
+        mesAtual.getMonth(),
+        diaSelecionado,
+      )
+    : null;
+
+  const { disponibilidade, carregando, erro } = useHorariosDisponiveis(dataISO);
+  const { criar } = useAgendamentos();
 
   const dataLabel = useMemo(() => {
     if (!diaSelecionado) return "";
@@ -63,19 +66,23 @@ export default function NovoAgendamento() {
     return `${diaSelecionado} de ${MESES_EXTENSO[mesAtual.getMonth()]} de ${mesAtual.getFullYear()} (${diaSemana})`;
   }, [mesAtual, diaSelecionado]);
 
-  const slots = useMemo(
-    () =>
-      HORARIOS_MOCK.map((horario) => ({
+  const slots = useMemo(() => {
+    if (!disponibilidade || disponibilidade.blocked) return [];
+
+    const ocupados = disponibilidade.occupied || [];
+
+    return [...disponibilidade.available, ...ocupados]
+      .sort()
+      .map((horario) => ({
         horario,
         status:
           horario === horarioSelecionado
             ? "selecionado"
-            : OCUPADOS_MOCK.includes(horario)
+            : ocupados.includes(horario)
               ? "ocupado"
               : "livre",
-      })),
-    [horarioSelecionado],
-  );
+      }));
+  }, [disponibilidade, horarioSelecionado]);
 
   function handleSelectDia(dia) {
     setDiaSelecionado(dia);
@@ -100,14 +107,25 @@ export default function NovoAgendamento() {
     setDiaSelecionado(null);
   }
 
-  function handleConfirmarDados({ nome, telefone }) {
-    setAgendamentoConfirmado({
-      nome,
-      telefone,
-      dataLabel,
-      horario: horarioSelecionado,
-    });
-    setModalAberto(false);
+  async function handleConfirmarDados({ nome, telefone }) {
+    setErroConfirmacao(null);
+    try {
+      await criar({
+        date: dataISO,
+        time: horarioSelecionado,
+        name: nome,
+        phone: telefone,
+      });
+      setAgendamentoConfirmado({
+        nome,
+        telefone,
+        dataLabel,
+        horario: horarioSelecionado,
+      });
+      setModalAberto(false);
+    } catch (e) {
+      setErroConfirmacao(e.message);
+    }
   }
 
   function handleNovoAgendamento() {
@@ -140,18 +158,47 @@ export default function NovoAgendamento() {
           onMesProximo={handleMesProximo}
         />
 
-        {diaSelecionado ? (
-          <GradeDeHorarios
-            dataLabel={dataLabel}
-            slots={slots}
-            onSelectHorario={handleSelectHorario}
-          />
-        ) : (
+        {!diaSelecionado && (
           <div className="text-center text-sm text-slate-400 py-10">
             Escolha uma data para ver os horários disponíveis.
           </div>
         )}
+
+        {diaSelecionado && carregando && (
+          <div className="text-center text-sm text-slate-400 py-10">
+            Carregando horários...
+          </div>
+        )}
+
+        {diaSelecionado && !carregando && erro && (
+          <div className="text-center text-sm text-red-500 py-10">
+            Não foi possível carregar os horários. Tente novamente.
+          </div>
+        )}
+
+        {diaSelecionado && !carregando && disponibilidade?.blocked && (
+          <div className="text-center text-sm text-slate-500 py-10">
+            {disponibilidade.reason === "holiday"
+              ? "Sem atendimento neste dia — feriado."
+              : "Sem atendimento aos finais de semana."}
+          </div>
+        )}
+
+        {diaSelecionado &&
+          !carregando &&
+          disponibilidade &&
+          !disponibilidade.blocked && (
+            <GradeDeHorarios
+              dataLabel={dataLabel}
+              slots={slots}
+              onSelectHorario={handleSelectHorario}
+            />
+          )}
       </div>
+
+      {erroConfirmacao && (
+        <p className="text-sm text-red-500 text-center">{erroConfirmacao}</p>
+      )}
 
       {horarioSelecionado && (
         <button
