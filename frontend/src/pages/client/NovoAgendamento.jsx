@@ -5,6 +5,7 @@ import ModalDadosPaciente from "../../components/agendamento/ModalDadosPacientes
 import ConfirmacaoAgendamento from "../../components/agendamento/ConfirmacaoAgendamentos";
 import { useHorariosDisponiveis } from "../../hooks/useHorariosDisponiveis";
 import { useAgendamentos } from "../../hooks/useAgendamentos";
+import { useNavigate } from "react-router-dom";
 
 const DIAS_SEMANA_EXTENSO = [
   "domingo",
@@ -54,7 +55,7 @@ export default function NovoAgendamento() {
 
   const { disponibilidade, carregando, erro } = useHorariosDisponiveis(dataISO);
   const { criar } = useAgendamentos();
-
+  const navigate = useNavigate();
   const dataLabel = useMemo(() => {
     if (!diaSelecionado) return "";
     const data = new Date(
@@ -138,9 +139,7 @@ export default function NovoAgendamento() {
       <ConfirmacaoAgendamento
         agendamento={agendamentoConfirmado}
         onNovoAgendamento={handleNovoAgendamento}
-        onVerAgendamentos={() => {
-          /* navegação para /meus-agendamentos entra aqui via useNavigate */
-        }}
+        onVerAgendamentos={() => navigate("/meus-agendamentos")}
       />
     );
   }

@@ -1,5 +1,10 @@
 import { useCallback, useState } from "react";
-import { criarAgendamento, listarAgendamentos } from "../services/api";
+import {
+  criarAgendamento,
+  listarAgendamentos,
+  atualizarAgendamento,
+  excluirAgendamento,
+} from "../services/api";
 
 export function useAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -23,5 +28,26 @@ export function useAgendamentos() {
     return criarAgendamento(dadosAgendamento);
   }, []);
 
-  return { agendamentos, carregando, erro, carregar, criar };
+  const atualizar = useCallback(async (id, dados) => {
+    const atualizado = await atualizarAgendamento(id, dados);
+    setAgendamentos((atual) =>
+      atual.map((a) => (a.id === id ? atualizado : a)),
+    );
+    return atualizado;
+  }, []);
+
+  const excluir = useCallback(async (id) => {
+    await excluirAgendamento(id);
+    setAgendamentos((atual) => atual.filter((a) => a.id !== id));
+  }, []);
+
+  return {
+    agendamentos,
+    carregando,
+    erro,
+    carregar,
+    criar,
+    atualizar,
+    excluir,
+  };
 }

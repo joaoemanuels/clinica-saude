@@ -1,15 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarDays, User } from "lucide-react";
+import { CalendarDays, User, Pencil, Trash2 } from "lucide-react";
 import { useAgendamentos } from "../../hooks/useAgendamentos";
 import EmptyState from "../../components/ui/EmptyState";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
+import ModalEditarAgendamento from "../../components/agendamento/ModalEditarAgendamento";
+import ModalConfirmarExclusao from "../../components/agendamento/ModalConfirmarExclusao";
 import { formatarDataBR } from "../../utils/formatDate";
 
 export default function MeusAgendamentos() {
-  const { agendamentos, carregando, erro, carregar } = useAgendamentos();
+  const { agendamentos, carregando, erro, carregar, atualizar, excluir } = useAgendamentos();
   const navigate = useNavigate();
+
+  const [agendamentoEditando, setAgendamentoEditando] = useState(null);
+  const [agendamentoExcluindo, setAgendamentoExcluindo] = useState(null);
 
   useEffect(() => {
     carregar();
@@ -68,11 +73,44 @@ export default function MeusAgendamentos() {
                 </div>
               </div>
 
-              <Badge status={agendamento.status} />
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setAgendamentoEditando(agendamento)}
+                  aria-label="Editar agendamento"
+                  className="p-1.5 rounded-full text-slate-400 hover:text-emerald-600
+                             hover:bg-emerald-50 transition-colors"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAgendamentoExcluindo(agendamento)}
+                  aria-label="Excluir agendamento"
+                  className="p-1.5 rounded-full text-slate-400 hover:text-red-600
+                             hover:bg-red-50 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <Badge status={agendamento.status} />
+              </div>
             </Card>
           ))}
         </div>
       )}
+
+      <ModalEditarAgendamento
+        open={!!agendamentoEditando}
+        agendamento={agendamentoEditando}
+        onClose={() => setAgendamentoEditando(null)}
+        onSalvar={atualizar}
+      />
+
+      <ModalConfirmarExclusao
+        open={!!agendamentoExcluindo}
+        onClose={() => setAgendamentoExcluindo(null)}
+        onConfirmar={() => excluir(agendamentoExcluindo.id)}
+      />
     </div>
   );
 }
