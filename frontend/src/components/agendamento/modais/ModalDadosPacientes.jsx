@@ -1,36 +1,18 @@
 import { useState } from "react";
-import Modal from "../ui/Modal";
+import {
+  formatarTelefone,
+  limparNome,
+  nomeValido,
+  telefoneValido,
+} from "../../../utils/formatForm";
 
-function formatarTelefone(valor) {
-  const digitos = valor.replace(/\D/g, "").slice(0, 11);
-
-  if (digitos.length <= 2) return digitos;
-  if (digitos.length <= 6)
-    return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
-  if (digitos.length <= 10) {
-    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
-  }
-  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
-}
-
-function nomeValido(valor) {
-  const partes = valor
-    .trim()
-    .split(/\s+/)
-    .filter((p) => p.length >= 2);
-  return partes.length >= 2;
-}
-
-function limparNome(valor) {
-  return valor.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
-}
+import Modal from "../../ui/Modal";
 
 export default function ModalDadosPacientes({ open, onClose, onConfirmar }) {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
 
-  const telefoneValido = telefone.replace(/\D/g, "").length === 11;
-  const podeConfirmar = nomeValido(nome) && telefoneValido;
+  const podeConfirmar = nomeValido(nome) && telefoneValido(telefone);
 
   function handleTelefoneChange(e) {
     setTelefone(formatarTelefone(e.target.value));

@@ -8,10 +8,10 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between px-4 md:px-8 py-3 bg-white border-b border-slate-200">
-      <div className="flex items-center gap-2">
+      <Link to="/" className="flex items-center gap-2">
         <HeartPulse className="w-6 h-6 text-emerald-600" strokeWidth={2.5} />
         <span className="font-semibold text-slate-800">Clínica Saúde</span>
-      </div>
+      </Link>
 
       <div className="hidden md:flex items-center gap-8">
         <nav className="flex items-center gap-6">

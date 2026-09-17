@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import Modal from "../ui/Modal";
+import { useState } from "react";
+import Modal from "../../ui/Modal";
 
 export default function ModalEditarAgendamento({
   open,
@@ -10,13 +10,15 @@ export default function ModalEditarAgendamento({
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [agendamentoAnterior, setAgendamentoAnterior] = useState(agendamento);
 
-  useEffect(() => {
+  if (agendamento !== agendamentoAnterior) {
+    setAgendamentoAnterior(agendamento);
     if (agendamento) {
       setNome(agendamento.name);
       setTelefone(agendamento.phone);
     }
-  }, [agendamento]);
+  }
 
   const podeSalvar = nome.trim().length > 0 && telefone.trim().length > 0;
 
@@ -32,7 +34,6 @@ export default function ModalEditarAgendamento({
       setSalvando(false);
     }
   }
-
   return (
     <Modal open={open} onClose={onClose} title="Editar agendamento">
       <p className="text-sm text-slate-500 mb-4">
