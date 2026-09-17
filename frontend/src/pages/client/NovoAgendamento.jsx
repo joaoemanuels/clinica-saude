@@ -6,6 +6,7 @@ import ConfirmacaoAgendamento from "../../components/agendamento/ConfirmacaoAgen
 import { useHorariosDisponiveis } from "../../hooks/useHorariosDisponiveis";
 import { useAgendamentos } from "../../hooks/useAgendamentos";
 import { useNavigate } from "react-router-dom";
+import { useFeriados } from "../../hooks/useFeriados";
 
 const DIAS_SEMANA_EXTENSO = [
   "domingo",
@@ -44,6 +45,7 @@ export default function NovoAgendamento() {
   const [modalAberto, setModalAberto] = useState(false);
   const [agendamentoConfirmado, setAgendamentoConfirmado] = useState(null);
   const [erroConfirmacao, setErroConfirmacao] = useState(null);
+  const feriados = useFeriados(mesAtual.getFullYear(), mesAtual.getMonth());
 
   const dataISO = diaSelecionado
     ? formatarDataISO(
@@ -72,18 +74,40 @@ export default function NovoAgendamento() {
 
     const ocupados = disponibilidade.occupied || [];
 
-    return [...disponibilidade.available, ...ocupados]
-      .sort()
-      .map((horario) => ({
+    const agora = new Date();
+    const ehHoje =
+      diaSelecionado === agora.getDate() &&
+      mesAtual.getMonth() === agora.getMonth() &&
+      mesAtual.getFullYear() === agora.getFullYear();
+
+    function ehHorarioPassado(horario) {
+      if (!ehHoje) return false;
+      const [h, m] = horario.split(":").map(Number);
+      const horarioData = new Date(
+        agora.getFullYear(),
+        agora.getMonth(),
+        agora.getDate(),
+        h,
+        m,
+      );
+      return horarioData < agora;
+    }
+
+    return [...disponibilidade.available, ...ocupados].sort().map((horario) => {
+      const passado = ehHorarioPassado(horario);
+      return {
         horario,
         status:
           horario === horarioSelecionado
             ? "selecionado"
-            : ocupados.includes(horario)
-              ? "ocupado"
-              : "livre",
-      }));
-  }, [disponibilidade, horarioSelecionado]);
+            : passado
+              ? "passado"
+              : ocupados.includes(horario)
+                ? "ocupado"
+                : "livre",
+      };
+    });
+  }, [disponibilidade, horarioSelecionado, diaSelecionado, mesAtual]);
 
   function handleSelectDia(dia) {
     setDiaSelecionado(dia);
@@ -94,7 +118,16 @@ export default function NovoAgendamento() {
     setHorarioSelecionado(horario);
   }
 
+  const hoje = new Date();
+  const mesMinimo = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+
+  const podeVoltarMes =
+    mesAtual.getFullYear() > mesMinimo.getFullYear() ||
+    (mesAtual.getFullYear() === mesMinimo.getFullYear() &&
+      mesAtual.getMonth() > mesMinimo.getMonth());
+
   function handleMesAnterior() {
+    if (!podeVoltarMes) return;
     setMesAtual(
       (atual) => new Date(atual.getFullYear(), atual.getMonth() - 1, 1),
     );
@@ -148,13 +181,15 @@ export default function NovoAgendamento() {
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-bold text-slate-800">Agende sua consulta</h1>
 
-      <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:items-start md:gap-6">
+      <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:items-start md:gap-6 ">
         <Calendario
           mesAtual={mesAtual}
           diaSelecionado={diaSelecionado}
           onSelectDia={handleSelectDia}
           onMesAnterior={handleMesAnterior}
           onMesProximo={handleMesProximo}
+          podeVoltarMes={podeVoltarMes}
+          feriados={feriados}
         />
 
         {!diaSelecionado && (
@@ -193,24 +228,22 @@ export default function NovoAgendamento() {
               onSelectHorario={handleSelectHorario}
             />
           )}
+        {horarioSelecionado && (
+          <button
+            type="button"
+            onClick={() => setModalAberto(true)}
+            className="w-full md:w-auto md:self-end bg-emerald-600 text-white
+                     rounded-lg px-4 py-2 font-medium hover:bg-emerald-700
+                     transition-colors"
+          >
+            Confirmar agendamento
+          </button>
+        )}
       </div>
 
       {erroConfirmacao && (
         <p className="text-sm text-red-500 text-center">{erroConfirmacao}</p>
       )}
-
-      {horarioSelecionado && (
-        <button
-          type="button"
-          onClick={() => setModalAberto(true)}
-          className="w-full md:w-auto md:self-end bg-emerald-600 text-white
-                     rounded-lg px-4 py-2 font-medium hover:bg-emerald-700
-                     transition-colors"
-        >
-          Confirmar agendamento
-        </button>
-      )}
-
       <ModalDadosPaciente
         open={modalAberto}
         onClose={() => setModalAberto(false)}

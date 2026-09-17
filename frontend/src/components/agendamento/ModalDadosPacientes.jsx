@@ -1,16 +1,45 @@
 import { useState } from "react";
 import Modal from "../ui/Modal";
 
+function formatarTelefone(valor) {
+  const digitos = valor.replace(/\D/g, "").slice(0, 11);
+
+  if (digitos.length <= 2) return digitos;
+  if (digitos.length <= 6)
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+  if (digitos.length <= 10) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+  }
+  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+}
+
+function nomeValido(valor) {
+  const partes = valor
+    .trim()
+    .split(/\s+/)
+    .filter((p) => p.length >= 2);
+  return partes.length >= 2;
+}
+
+function limparNome(valor) {
+  return valor.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+}
+
 export default function ModalDadosPacientes({ open, onClose, onConfirmar }) {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
 
-  const podeConfirmar = nome.trim().length > 0 && telefone.trim().length > 0;
+  const telefoneValido = telefone.replace(/\D/g, "").length === 11;
+  const podeConfirmar = nomeValido(nome) && telefoneValido;
+
+  function handleTelefoneChange(e) {
+    setTelefone(formatarTelefone(e.target.value));
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!podeConfirmar) return;
-    onConfirmar({ nome, telefone });
+    onConfirmar({ nome: nome.trim(), telefone });
   }
 
   return (
@@ -31,12 +60,17 @@ export default function ModalDadosPacientes({ open, onClose, onConfirmar }) {
             id="nome"
             type="text"
             value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            onChange={(e) => setNome(limparNome(e.target.value))}
             placeholder="Ex: João da Silva"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm
-                       placeholder:text-slate-400 focus:outline-none focus:ring-2
-                       focus:ring-emerald-500 focus:border-transparent"
+             placeholder:text-slate-400 focus:outline-none focus:ring-2
+             focus:ring-emerald-500 focus:border-transparent"
           />
+          {nome.length > 0 && !nomeValido(nome) && (
+            <p className="text-xs text-red-500 mt-1">
+              Informe nome e sobrenome.
+            </p>
+          )}
         </div>
 
         <div>
@@ -49,13 +83,18 @@ export default function ModalDadosPacientes({ open, onClose, onConfirmar }) {
           <input
             id="telefone"
             type="tel"
+            inputMode="numeric"
             value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
+            onChange={handleTelefoneChange}
             placeholder="(xx) xxxxx-xxxx"
+            maxLength={15}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm
                        placeholder:text-slate-400 focus:outline-none focus:ring-2
                        focus:ring-emerald-500 focus:border-transparent"
           />
+          {telefone.length > 0 && !telefoneValido && (
+            <p className="text-xs text-red-500 mt-1">Telefone incompleto.</p>
+          )}
         </div>
 
         <button
