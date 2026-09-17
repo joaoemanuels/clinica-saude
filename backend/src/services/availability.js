@@ -27,7 +27,7 @@ export async function buscarHorariosOcupados(dataISO) {
 
   if (error) throw error;
 
-  return data.map((linha) => linha.time.slice(0, 5)); // "08:00:00" -> "08:00"
+  return data.map((linha) => linha.time.slice(0, 5));
 }
 
 export async function calcularDisponibilidade(dataISO) {

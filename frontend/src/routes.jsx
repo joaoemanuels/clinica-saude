@@ -13,13 +13,4 @@ export const router = createBrowserRouter([
       { path: "meus-agendamentos", element: <MeusAgendamentos /> },
     ],
   },
-  // {
-  //   path: "/admin",
-  //   element: <AdminLayout />,
-  //   children: [
-  //     { path: "login", element: <Login /> },
-  //     { path: "dashboard", element: <Dashboard /> },
-  //     { path: "agendamentos", element: <Agendamentos /> },
-  //   ],
-  // },
 ]);

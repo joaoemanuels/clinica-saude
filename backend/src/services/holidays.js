@@ -13,7 +13,7 @@ async function buscarFeriadosDoAno(ano) {
   }
 
   const feriados = await resposta.json();
-  const datas = new Set(feriados.map((f) => f.date)); // formato YYYY-MM-DD
+  const datas = new Set(feriados.map((f) => f.date));
 
   cachePorAno.set(ano, datas);
   return datas;
