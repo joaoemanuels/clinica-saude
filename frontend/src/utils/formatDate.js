@@ -56,3 +56,24 @@ export function formatarDataLabel(mesAtual, diaSelecionado) {
   const diaSemana = DIAS_SEMANA_EXTENSO[data.getDay()];
   return `${diaSelecionado} de ${MESES_EXTENSO[mesAtual.getMonth()]} de ${mesAtual.getFullYear()} (${diaSemana})`;
 }
+
+export function getDiasDoMes(ano, mes) {
+  const primeiroDia = new Date(ano, mes, 1).getDay();
+  const totalDias = new Date(ano, mes + 1, 0).getDate();
+
+  const dias = [];
+  for (let i = 0; i < primeiroDia; i++) dias.push(null);
+  for (let d = 1; d <= totalDias; d++) dias.push(d);
+  return dias;
+}
+
+export function formatarDataLabel(mesAtual, diaSelecionado) {
+  if (!diaSelecionado) return "";
+  const data = new Date(
+    mesAtual.getFullYear(),
+    mesAtual.getMonth(),
+    diaSelecionado,
+  );
+  const diaSemana = DIAS_SEMANA_EXTENSO[data.getDay()];
+  return `${diaSelecionado} de ${MESES_EXTENSO[mesAtual.getMonth()]} de ${mesAtual.getFullYear()} (${diaSemana})`;
+}
