@@ -1,5 +1,5 @@
 import { Check, User, CalendarDays, Clock, Phone, BadgeCheck } from "lucide-react";
-import Card from "../ui/Card";
+import Card from "../../ui/Card";
 
 export default function ConfirmacaoAgendamento({
   agendamento,

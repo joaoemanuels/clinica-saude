@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../ui/Modal";
+import Modal from "../../ui/Modal";
 
 export default function ModalConfirmarExclusao({ open, onClose, onConfirmar }) {
   const [excluindo, setExcluindo] = useState(false);
